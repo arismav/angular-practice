@@ -1,0 +1,10 @@
+@reference 'tailwindcss';
+
+.task-list {
+  @apply list-none m-0 p-0 flex flex-col gap-2.5;
+}
+
+.task-list__empty {
+  @apply text-center text-gray-400 py-10 px-4
+         border-2 border-dashed border-gray-200 rounded-xl;
+}

@@ -1,0 +1,37 @@
+@reference 'tailwindcss';
+
+.task-item {
+  @apply flex items-center justify-between gap-3 px-4 py-3
+         rounded-xl border-2 transition-colors duration-150;
+}
+
+.task-item__body {
+  @apply flex items-center gap-2 flex-1 min-w-0;
+}
+
+.task-item__title {
+  @apply text-sm font-medium truncate transition-colors duration-150;
+}
+
+.task-item__badge {
+  @apply flex-shrink-0 text-xs font-semibold uppercase tracking-wide
+         px-2 py-0.5 rounded-full transition-colors duration-150;
+}
+
+.task-item__actions {
+  @apply flex gap-1.5 flex-shrink-0;
+}
+
+// Base button — shared across all action variants
+.task-btn {
+  @apply px-2.5 py-1 rounded-md text-xs font-semibold border-0
+         cursor-pointer transition-opacity duration-100 active:scale-95
+         focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500;
+
+  &:hover { @apply opacity-80; }
+
+  &--start  { @apply bg-amber-100 text-amber-800; }
+  &--done   { @apply bg-emerald-100 text-emerald-800; }
+  &--reset  { @apply bg-gray-100 text-gray-700; }
+  &--remove { @apply bg-red-100 text-red-700; }
+}

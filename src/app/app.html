@@ -1,0 +1,28 @@
+<div class="min-h-screen bg-gray-50 px-4 py-8">
+  <div class="max-w-6xl mx-auto flex flex-col gap-6">
+
+    <!-- Selector: activeProject → name, description, tags, member avatars -->
+    <app-project-header />
+
+    <!-- Selector: stats → totals + completion % -->
+    <app-project-stats />
+
+    <!-- Selector: filter → active tab; Action: setFilter() -->
+    <app-task-filters />
+
+    <!-- Selectors: tasksByStatus + members → kanban columns + task cards -->
+    <app-task-board />
+
+    <!-- WebSocket + Signals: ChatService bridges RxJS streams → signal store -->
+    <app-ws-chat />
+
+    <!-- NotificationService: receive-only WS stream → signal store -->
+    <app-ws-notifications />
+
+    <!-- Signal architecture legend -->
+    <footer class="text-center text-xs text-gray-400 pt-4 border-t border-gray-100">
+      Angular 21 &middot; Signals &middot; Computed Selectors &middot; OnPush &middot; WebSockets &middot; Tailwind v4
+    </footer>
+
+  </div>
+</div>

@@ -1,0 +1,59 @@
+<section aria-label="Project statistics">
+
+  <!-- Stat cards -->
+  <dl class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+
+    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+      <dt class="text-xs font-semibold text-gray-400 uppercase tracking-wider">Total</dt>
+      <dd class="mt-1 text-3xl font-bold text-gray-800" aria-live="polite">
+        {{ stats().total }}
+      </dd>
+    </div>
+
+    <div class="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+      <dt class="text-xs font-semibold text-gray-400 uppercase tracking-wider">To Do</dt>
+      <dd class="mt-1 text-3xl font-bold text-gray-500" aria-live="polite">
+        {{ stats().todo }}
+      </dd>
+    </div>
+
+    <div class="bg-amber-50 rounded-xl p-4 shadow-sm border border-amber-100">
+      <dt class="text-xs font-semibold text-amber-500 uppercase tracking-wider">In Progress</dt>
+      <dd class="mt-1 text-3xl font-bold text-amber-600" aria-live="polite">
+        {{ stats().inProgress }}
+      </dd>
+    </div>
+
+    <div class="bg-emerald-50 rounded-xl p-4 shadow-sm border border-emerald-100">
+      <dt class="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Done</dt>
+      <dd class="mt-1 text-3xl font-bold text-emerald-600" aria-live="polite">
+        {{ stats().done }}
+      </dd>
+    </div>
+
+  </dl>
+
+  <!-- Progress bar -->
+  <div class="mt-4 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+    <div class="flex justify-between items-center mb-2">
+      <span class="text-sm font-medium text-gray-600">Overall completion</span>
+      <span class="text-sm font-bold text-gray-800" aria-live="polite">
+        {{ stats().completion }}%
+      </span>
+    </div>
+    <div
+      class="w-full bg-gray-100 rounded-full h-2.5"
+      role="progressbar"
+      [attr.aria-valuenow]="stats().completion"
+      aria-valuemin="0"
+      aria-valuemax="100"
+      [attr.aria-label]="'Project completion: ' + stats().completion + '%'"
+    >
+      <div
+        class="bg-emerald-500 h-2.5 rounded-full transition-all duration-500"
+        [style.width.%]="stats().completion"
+      ></div>
+    </div>
+  </div>
+
+</section>

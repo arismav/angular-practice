@@ -1,0 +1,8 @@
+<span
+  class="inline-flex items-center gap-1.5"
+  role="status"
+  [attr.aria-label]="'WebSocket connection: ' + config().label"
+>
+  <span class="w-2 h-2 rounded-full" [class]="config().dotClass" aria-hidden="true"></span>
+  <span class="text-xs font-semibold" [class]="config().textClass">{{ config().label }}</span>
+</span>

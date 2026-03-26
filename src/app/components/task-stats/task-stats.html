@@ -1,0 +1,23 @@
+<section class="stats-grid" aria-label="Task statistics">
+
+  <div class="stat-card">
+    <span class="stat-card__value">{{ stats().total }}</span>
+    <span class="stat-card__label">Total</span>
+  </div>
+
+  <div class="stat-card stat-card--todo">
+    <span class="stat-card__value">{{ stats().todo }}</span>
+    <span class="stat-card__label">To Do</span>
+  </div>
+
+  <div class="stat-card stat-card--progress">
+    <span class="stat-card__value stat-card__value--progress">{{ stats().inProgress }}</span>
+    <span class="stat-card__label">In Progress</span>
+  </div>
+
+  <div class="stat-card stat-card--done">
+    <span class="stat-card__value stat-card__value--done">{{ stats().done }}</span>
+    <span class="stat-card__label">Done</span>
+  </div>
+
+</section>

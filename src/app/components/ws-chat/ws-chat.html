@@ -1,0 +1,176 @@
+<section
+  class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col"
+  aria-label="Live team chat"
+>
+
+  <!-- ── Panel header ──────────────────────────────────────────────────────── -->
+  <div class="flex items-center justify-between gap-3 px-4 py-3 border-b border-gray-100 bg-slate-800">
+
+    <div class="flex items-center gap-3">
+      <span class="text-white font-semibold text-sm">Live Chat</span>
+      <!-- WsStatusComponent: injects WebSocketService independently -->
+      <app-ws-status />
+    </div>
+
+    <!-- Author identity + message count -->
+    <div class="flex items-center gap-2">
+      <span class="text-slate-400 text-xs">{{ messageCount() }} messages</span>
+      <button
+        type="button"
+        (click)="toggleAuthorForm()"
+        class="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-700 hover:bg-slate-600 transition-colors"
+        [attr.aria-expanded]="showAuthorForm()"
+        aria-controls="author-form"
+        [attr.aria-label]="'Change author name, current: ' + author()"
+      >
+        <span class="w-5 h-5 rounded-full bg-violet-500 flex items-center justify-center text-white text-xs font-bold" aria-hidden="true">
+          {{ authorInitial() }}
+        </span>
+        <span class="text-slate-300 text-xs truncate max-w-24">{{ author() }}</span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ── Author rename form (collapsible) ──────────────────────────────────── -->
+  @if (showAuthorForm()) {
+    <form
+      id="author-form"
+      [formGroup]="authorForm"
+      (ngSubmit)="onSetAuthor()"
+      class="flex gap-2 px-4 py-2 bg-slate-50 border-b border-gray-100"
+      aria-label="Change your display name"
+    >
+      <label for="author-name" class="sr-only">Display name</label>
+      <input
+        id="author-name"
+        type="text"
+        formControlName="name"
+        [placeholder]="author()"
+        class="flex-1 rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-slate-400"
+        [attr.aria-invalid]="authorForm.controls.name.invalid && authorForm.controls.name.dirty"
+      />
+      <button
+        type="submit"
+        class="px-3 py-1.5 rounded-lg bg-slate-800 text-white text-xs font-medium disabled:opacity-40"
+        [disabled]="authorForm.invalid"
+      >
+        Save
+      </button>
+    </form>
+  }
+
+  <!-- ── Messages list ─────────────────────────────────────────────────────── -->
+  <!--
+    flex-col-reverse trick:
+    We render messages newest-first in the DOM (reversedMessages).
+    flex-direction: column-reverse flips them visually so newest is at the
+    bottom — the container stays naturally scrolled to the bottom as new
+    messages arrive, with zero JavaScript scroll manipulation.
+  -->
+  <div
+    class="flex flex-col-reverse overflow-y-auto flex-1 min-h-64 max-h-80 px-4 py-3 gap-2"
+    role="log"
+    aria-live="polite"
+    aria-label="Chat messages"
+  >
+    @if (messages().length === 0) {
+      <p class="text-center text-gray-400 text-sm py-8" role="status">
+        @if (isConnected()) {
+          Connected — say something!
+        } @else {
+          Connect to start chatting.
+        }
+      </p>
+    }
+
+    @for (msg of reversedMessages(); track msg.timestamp + msg.type) {
+
+      <!-- System message — centred, muted -->
+      @if (isSystemMsg(msg)) {
+        <div class="flex justify-center">
+          <span class="text-xs text-gray-400 bg-gray-50 px-3 py-1 rounded-full border border-gray-100">
+            {{ msg.payload.text }}
+            @if (msg.clientCount) {
+              &middot; {{ msg.clientCount }} online
+            }
+          </span>
+        </div>
+      }
+
+      <!-- Chat message — own vs others -->
+      @if (isChatMsg(msg)) {
+        <div [class]="isOwnMessage(msg) ? 'flex flex-col items-end' : 'flex flex-col items-start'">
+
+          <!-- Author label -->
+          <span class="text-xs text-gray-400 mb-0.5 px-1">
+            {{ isOwnMessage(msg) ? 'You' : msg.payload.author }}
+          </span>
+
+          <!-- Bubble -->
+          <div
+            [class]="isOwnMessage(msg)
+              ? 'bg-slate-800 text-white rounded-2xl rounded-tr-sm px-3 py-2 text-sm max-w-xs break-words'
+              : 'bg-gray-100 text-gray-800 rounded-2xl rounded-tl-sm px-3 py-2 text-sm max-w-xs break-words'"
+          >
+            {{ msg.payload.text }}
+          </div>
+
+          <!-- Timestamp -->
+          <time
+            class="text-xs text-gray-300 mt-0.5 px-1"
+            [attr.dateTime]="msg.serverTimestamp ?? msg.timestamp"
+          >
+            {{ (msg.serverTimestamp ?? msg.timestamp) | slice: 11 : 19 }}
+          </time>
+
+        </div>
+      }
+
+    }
+  </div>
+
+  <!-- ── Send form ──────────────────────────────────────────────────────────── -->
+  <div class="border-t border-gray-100 px-4 py-3">
+
+    @if (isConnected()) {
+      <form
+        [formGroup]="sendForm"
+        (ngSubmit)="onSend()"
+        class="flex gap-2"
+        aria-label="Send a message"
+      >
+        <label for="chat-message" class="sr-only">Message</label>
+        <input
+          id="chat-message"
+          type="text"
+          formControlName="message"
+          placeholder="Type a message…"
+          class="flex-1 rounded-xl border border-gray-200 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-slate-400"
+          autocomplete="off"
+        />
+        <button
+          type="submit"
+          class="px-4 py-2 rounded-xl bg-slate-800 text-white text-sm font-medium hover:bg-slate-700 transition-colors disabled:opacity-40"
+          [disabled]="sendForm.invalid"
+          aria-label="Send message"
+        >
+          Send
+        </button>
+      </form>
+    } @else {
+      <div class="flex gap-2">
+        <button
+          type="button"
+          (click)="onConnect()"
+          class="flex-1 py-2 rounded-xl bg-emerald-500 text-white text-sm font-semibold hover:bg-emerald-600 transition-colors"
+        >
+          Connect
+        </button>
+        <p class="sr-only" role="status">WebSocket disconnected. Press Connect to join the chat.</p>
+      </div>
+    }
+
+  </div>
+
+</section>

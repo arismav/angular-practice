@@ -1,0 +1,85 @@
+<article
+  class="bg-white rounded-xl border border-gray-100 border-l-4 shadow-sm hover:shadow-md transition-shadow p-4 flex flex-col gap-3"
+  [class]="cardAccent()"
+  [attr.aria-label]="'Task: ' + task().title"
+>
+
+  <!-- Header row: priority badge + remove button -->
+  <div class="flex items-start justify-between gap-2">
+    <span
+      class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium border"
+      [class]="priorityBadge().classes"
+    >
+      {{ priorityBadge().label }}
+    </span>
+
+    <button
+      type="button"
+      (click)="onRemove()"
+      class="text-gray-300 hover:text-red-400 transition-colors text-lg leading-none"
+      aria-label="Remove task"
+    >
+      ×
+    </button>
+  </div>
+
+  <!-- Title -->
+  <h3 class="text-sm leading-snug" [class]="titleClasses()">
+    {{ task().title }}
+  </h3>
+
+  <!-- Description -->
+  @if (task().description) {
+    <p class="text-xs text-gray-400 leading-relaxed">{{ task().description }}</p>
+  }
+
+  <!-- Footer: due date + assignee + status -->
+  <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-gray-50">
+
+    <!-- Due date -->
+    <time
+      [class]="'text-xs ' + dueDateClasses()"
+      [attr.dateTime]="task().dueDate"
+    >
+      @if (task().dueDate) {
+        {{ task().dueDate }}
+      } @else {
+        No due date
+      }
+    </time>
+
+    <!-- Assignee avatar -->
+    @if (assignee(); as member) {
+      <div
+        class="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"
+        [class]="member.avatarColor"
+        [title]="member.name"
+        [attr.aria-label]="'Assigned to ' + member.name"
+        role="img"
+      >
+        {{ member.initials }}
+      </div>
+    } @else {
+      <div
+        class="w-6 h-6 rounded-full border-2 border-dashed border-gray-200 flex-shrink-0"
+        aria-label="Unassigned"
+        title="Unassigned"
+      ></div>
+    }
+
+  </div>
+
+  <!-- Status select -->
+  <label class="sr-only" [attr.for]="'status-' + task().id">Change status</label>
+  <select
+    [id]="'status-' + task().id"
+    [value]="task().status"
+    (change)="onStatusChange($event)"
+    class="w-full text-xs rounded-lg border border-gray-200 bg-gray-50 px-2 py-1.5 text-gray-600 focus:outline-none focus:ring-2 focus:ring-slate-400"
+  >
+    <option value="todo">To Do</option>
+    <option value="in-progress">In Progress</option>
+    <option value="done">Done</option>
+  </select>
+
+</article>

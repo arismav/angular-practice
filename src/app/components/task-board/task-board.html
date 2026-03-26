@@ -1,0 +1,107 @@
+<section aria-label="Task board">
+
+  <!-- Add task bar -->
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Board</h2>
+    <button
+      type="button"
+      (click)="toggleAddForm()"
+      class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-slate-800 text-white text-sm font-medium hover:bg-slate-700 transition-colors"
+      [attr.aria-expanded]="showAddForm()"
+      aria-controls="add-task-form"
+    >
+      @if (showAddForm()) { Cancel } @else { + Add task }
+    </button>
+  </div>
+
+  <!-- Inline add-task form (only in Todo column scope) -->
+  @if (showAddForm()) {
+    <form
+      id="add-task-form"
+      [formGroup]="addForm"
+      (ngSubmit)="onAddTask()"
+      class="bg-white border border-slate-200 rounded-xl p-4 mb-6 shadow-sm flex flex-col sm:flex-row gap-3"
+      aria-label="Add a new task"
+    >
+      <div class="flex-1">
+        <label for="task-title" class="sr-only">Task title</label>
+        <input
+          id="task-title"
+          type="text"
+          formControlName="title"
+          placeholder="What needs to be done?"
+          class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-slate-400"
+          [attr.aria-invalid]="addForm.controls.title.invalid && addForm.controls.title.dirty"
+        />
+        @if (addForm.controls.title.invalid && addForm.controls.title.dirty) {
+          <p class="mt-1 text-xs text-red-500" role="alert">Minimum 3 characters required.</p>
+        }
+      </div>
+
+      <div>
+        <label for="task-priority" class="sr-only">Priority</label>
+        <select
+          id="task-priority"
+          formControlName="priority"
+          class="rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-slate-400"
+        >
+          <option value="high">High priority</option>
+          <option value="medium">Medium priority</option>
+          <option value="low">Low priority</option>
+        </select>
+      </div>
+
+      <button
+        type="submit"
+        class="px-5 py-2 rounded-lg bg-emerald-500 text-white text-sm font-semibold hover:bg-emerald-600 transition-colors disabled:opacity-50"
+        [disabled]="addForm.invalid"
+      >
+        Add
+      </button>
+    </form>
+  }
+
+  <!-- Kanban columns -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    @for (col of columns; track col.id) {
+      <div class="flex flex-col gap-3">
+
+        <!-- Column header -->
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full" [class]="col.accent" aria-hidden="true"></span>
+          <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wider">
+            {{ col.label }}
+          </h3>
+          <span class="ml-auto text-xs font-medium text-gray-400 bg-gray-100 rounded-full px-2 py-0.5">
+            {{ tasksForColumn(col.id).length }}
+          </span>
+        </div>
+
+        <!-- Task cards -->
+        <ul class="flex flex-col gap-3 min-h-24" role="list" [attr.aria-label]="col.label + ' tasks'">
+          @for (task of tasksForColumn(col.id); track task.id) {
+            <li>
+              <app-task-card
+                [task]="task"
+                [members]="members()"
+                (statusChange)="onStatusChange(task.id, $event)"
+                (remove)="onRemove(task.id)"
+              />
+            </li>
+          }
+
+          @if (tasksForColumn(col.id).length === 0) {
+            <li
+              class="flex items-center justify-center h-24 rounded-xl border-2 border-dashed border-gray-100"
+              aria-live="polite"
+            >
+              <span class="text-xs" [class]="col.empty">No tasks here</span>
+            </li>
+          }
+        </ul>
+
+      </div>
+    }
+  </div>
+
+</section>

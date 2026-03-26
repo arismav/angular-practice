@@ -1,0 +1,35 @@
+@reference 'tailwindcss';
+
+.task-form {
+  @apply mb-6;
+}
+
+.task-form__label {
+  @apply block text-sm font-semibold text-gray-700 mb-1.5;
+}
+
+.task-form__row {
+  @apply flex gap-2;
+}
+
+.task-form__input {
+  @apply flex-1 px-3.5 py-2.5 rounded-lg border-2 border-gray-300 text-sm outline-none
+         transition-colors duration-150
+         focus:border-indigo-500;
+
+  &--invalid {
+    @apply border-red-400 focus:border-red-500;
+  }
+}
+
+.task-form__btn {
+  @apply px-5 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-semibold
+         cursor-pointer transition-opacity duration-150
+         hover:opacity-90 active:scale-95
+         disabled:opacity-40 disabled:cursor-not-allowed
+         focus-visible:outline-3 focus-visible:outline-indigo-500 focus-visible:outline-offset-2;
+}
+
+.task-form__error {
+  @apply mt-1.5 text-xs text-red-500;
+}
