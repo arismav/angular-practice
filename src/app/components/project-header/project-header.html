@@ -1,0 +1,53 @@
+@if (project(); as p) {
+  <header
+    class="bg-gradient-to-br from-slate-800 to-slate-700 text-white rounded-2xl p-6 shadow-xl"
+    aria-label="Project header"
+  >
+    <div class="flex items-start justify-between gap-6 flex-wrap">
+
+      <!-- Project info -->
+      <div class="flex-1 min-w-0">
+        <p class="text-slate-400 text-xs font-semibold uppercase tracking-widest mb-1">
+          Active Project
+        </p>
+        <h1 class="text-2xl font-bold tracking-tight truncate">{{ p.name }}</h1>
+        <p class="mt-2 text-slate-300 text-sm leading-relaxed max-w-lg">
+          {{ p.description }}
+        </p>
+
+        <!-- Tags -->
+        <ul class="flex flex-wrap gap-2 mt-4" aria-label="Project tags" role="list">
+          @for (tag of p.tags; track tag) {
+            <li
+              class="px-3 py-1 rounded-full bg-slate-600/70 text-slate-200 text-xs font-medium border border-slate-500/50"
+            >
+              {{ tag }}
+            </li>
+          }
+        </ul>
+      </div>
+
+      <!-- Member avatars -->
+      <div>
+        <p class="text-slate-400 text-xs font-semibold uppercase tracking-widest mb-3 text-right">
+          Team
+        </p>
+        <ul class="flex items-center" aria-label="Team members" role="list">
+          @for (member of members(); track member.id) {
+            <li class="-ml-2 first:ml-0">
+              <div
+                [class]="avatarClasses(member)"
+                [title]="member.name + ' — ' + member.role"
+                [attr.aria-label]="member.name + ', ' + member.role"
+                role="img"
+              >
+                {{ member.initials }}
+              </div>
+            </li>
+          }
+        </ul>
+      </div>
+
+    </div>
+  </header>
+}

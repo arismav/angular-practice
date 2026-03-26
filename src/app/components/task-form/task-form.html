@@ -1,0 +1,37 @@
+<form
+  class="task-form"
+  [formGroup]="form"
+  (ngSubmit)="onSubmit()"
+  aria-label="Add new task"
+>
+  <label for="task-title" class="task-form__label">New Task</label>
+
+  <div class="task-form__row">
+    <input
+      id="task-title"
+      class="task-form__input"
+      [class.task-form__input--invalid]="titleInvalid"
+      type="text"
+      formControlName="title"
+      placeholder="What needs to be done?"
+      aria-required="true"
+      [attr.aria-invalid]="titleInvalid || null"
+      [attr.aria-describedby]="titleInvalid ? 'title-error' : null"
+    />
+
+    <button
+      class="task-form__btn"
+      type="submit"
+      [disabled]="form.invalid"
+      aria-label="Add task"
+    >
+      + Add Task
+    </button>
+  </div>
+
+  @if (titleInvalid) {
+    <p id="title-error" class="task-form__error" role="alert">
+      Title must be at least 3 characters.
+    </p>
+  }
+</form>

@@ -1,0 +1,24 @@
+@reference 'tailwindcss';
+
+.stats-grid {
+  @apply grid grid-cols-4 gap-3 mb-6;
+}
+
+.stat-card {
+  @apply flex flex-col items-center gap-1 p-3 rounded-xl border-2 border-transparent bg-gray-100 transition-colors;
+
+  &--todo     { @apply border-gray-300 bg-gray-50; }
+  &--progress { @apply border-amber-300 bg-amber-50; }
+  &--done     { @apply border-emerald-300 bg-emerald-50; }
+}
+
+.stat-card__value {
+  @apply text-3xl font-bold leading-none;
+
+  &--progress { @apply text-amber-700; }
+  &--done     { @apply text-emerald-700; }
+}
+
+.stat-card__label {
+  @apply text-xs uppercase tracking-widest text-gray-400;
+}

@@ -1,0 +1,17 @@
+@reference 'tailwindcss';
+
+.app-shell {
+  @apply max-w-2xl mx-auto px-4 py-10;
+}
+
+.app-shell__header {
+  @apply text-center mb-8;
+}
+
+.app-shell__title {
+  @apply text-3xl font-bold text-indigo-600;
+}
+
+.app-shell__subtitle {
+  @apply mt-1 text-xs text-gray-400 tracking-widest uppercase;
+}
