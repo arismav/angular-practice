@@ -14,8 +14,9 @@
 
 import { WebSocketServer } from 'ws';
 
-const PORT = 4201;
-const wss  = new WebSocketServer({ port: PORT });
+const PORT = Number(process.env.PORT ?? 4201);
+const HOST = process.env.HOST ?? '0.0.0.0';
+const wss  = new WebSocketServer({ host: HOST, port: PORT });
 
 /** @type {Set<import('ws').WebSocket>} */
 const clients = new Set();

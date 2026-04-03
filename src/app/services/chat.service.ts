@@ -18,8 +18,15 @@ import { merge } from 'rxjs';
 import { ChatPayload, SystemPayload, WsMessage } from '../models/ws-message.model';
 import { WebSocketService } from './web-socket.service';
 
-const WS_URL      = 'ws://localhost:4201';
+const WS_URL      = buildWebSocketUrl();
 const MAX_HISTORY = 100; // sliding window — prevents unbounded memory growth
+
+function buildWebSocketUrl(): string {
+  if (typeof window === 'undefined') return 'ws://localhost:4201/ws';
+
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  return `${protocol}//${window.location.host}/ws`;
+}
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {

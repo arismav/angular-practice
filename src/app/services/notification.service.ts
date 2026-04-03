@@ -15,8 +15,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NotificationPayload, WsMessage } from '../models/ws-message.model';
 import { WebSocketService } from './web-socket.service';
 
-const WS_URL      = 'ws://localhost:4201';
+const WS_URL      = buildWebSocketUrl();
 const MAX_HISTORY = 20; // keep the last 20 notifications
+
+function buildWebSocketUrl(): string {
+  if (typeof window === 'undefined') return 'ws://localhost:4201/ws';
+
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  return `${protocol}//${window.location.host}/ws`;
+}
 
 @Injectable({ providedIn: 'root' })
 export class NotificationService {

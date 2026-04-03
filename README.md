@@ -36,6 +36,35 @@ ng build
 
 This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
 
+## Docker
+
+This project can run as two containers composed together:
+
+- `frontend`: Angular production build served by Nginx
+- `backend`: Node WebSocket server
+
+Nginx also proxies `/ws` to the backend container, so the browser uses a same-origin WebSocket URL instead of a hardcoded localhost port.
+
+Build and run everything:
+
+```bash
+npm run docker:up
+```
+
+Then open:
+
+```text
+http://localhost:8080
+```
+
+Useful Docker commands:
+
+```bash
+npm run docker:build
+npm run docker:down
+npm run docker:logs
+```
+
 ## Running unit tests
 
 To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
