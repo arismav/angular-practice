@@ -136,5 +136,16 @@ setInterval(() => {
   console.log(`[🔔] notification → ${template.severity}: ${template.title}`);
 }, 7_000);
 
-console.log(`✔ WebSocket server running on ws://localhost:${PORT}`);
-console.log('  Ctrl+C to stop\n');
+wss.on('listening', () => {
+  console.log(`✔ WebSocket server running on ws://localhost:${PORT}`);
+  console.log('  Ctrl+C to stop\n');
+});
+
+wss.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`Port ${PORT} is already in use. Stop the existing WS server or run with a different PORT.`);
+    process.exit(1);
+  }
+
+  console.error('[!] WebSocket server error:', err.message);
+});

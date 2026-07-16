@@ -15,7 +15,7 @@ const INITIAL_STATE: AppState = {
   projects: [
     {
       id: 1,
-      name: 'Angular 21 — Signals Deep Dive',
+      name: 'Angular 21 — Signals Deep Dive Aris Mav',
       description:
         'A production-grade example showcasing signal-based state, computed selectors, and reactive component patterns.',
       tags: ['Angular 21', 'Signals', 'TypeScript', 'Tailwind'],

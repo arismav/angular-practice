@@ -80,6 +80,7 @@ export class WsNotificationsComponent {
 
   // ── Actions ───────────────────────────────────────────────────────────────
   onConnect(): void { this.notificationService.connect(); }
+  onDisconnect(): void { this.notificationService.disconnect(); }
   onDismiss(id: string): void { this.notificationService.dismiss(id); }
   onDismissAll(): void { this.notificationService.dismissAll(); }
 }

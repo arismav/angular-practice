@@ -72,6 +72,10 @@ export class NotificationService {
     this.ws.connect(WS_URL);
   }
 
+  disconnect():void {
+    this.ws.disconnect();
+  }
+
   /** Remove a single notification from the visible list */
   dismiss(id: string): void {
     this._dismissedIds.update(ids => new Set([...ids, id]));
