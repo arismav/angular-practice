@@ -47,6 +47,14 @@ jobs:
       - name: Build Angular app
         run: npm run build
 
+      - name: Upload Angular build artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: angular-dist
+          path: dist/angular-practice/browser
+          if-no-files-found: error
+          retention-days: 7
+
   docker:
     name: Build Docker images
     runs-on: ubuntu-latest
