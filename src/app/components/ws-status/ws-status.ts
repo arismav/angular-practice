@@ -7,8 +7,8 @@ import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/c
 import { ConnectionStatus, WebSocketService } from '../../services/web-socket.service';
 
 interface StatusConfig {
-  label:     string;
-  dotClass:  string;
+  label: string;
+  dotClass: string;
   textClass: string;
 }
 
@@ -29,10 +29,18 @@ export class WsStatusComponent {
    */
   readonly config = computed<StatusConfig>(() => {
     const map: Record<ConnectionStatus, StatusConfig> = {
-      connected:    { label: 'Live',        dotClass: 'bg-emerald-400 animate-pulse', textClass: 'text-emerald-600' },
-      connecting:   { label: 'Connecting…', dotClass: 'bg-amber-400 animate-pulse',   textClass: 'text-amber-600'   },
-      disconnected: { label: 'Offline',     dotClass: 'bg-gray-300',                  textClass: 'text-gray-500'    },
-      error:        { label: 'Error',       dotClass: 'bg-red-400',                   textClass: 'text-red-500'     },
+      connected: {
+        label: 'Live',
+        dotClass: 'bg-emerald-400 animate-pulse',
+        textClass: 'text-emerald-600',
+      },
+      connecting: {
+        label: 'Connecting…',
+        dotClass: 'bg-amber-400 animate-pulse',
+        textClass: 'text-amber-600',
+      },
+      disconnected: { label: 'Offline', dotClass: 'bg-gray-300', textClass: 'text-gray-500' },
+      error: { label: 'Error', dotClass: 'bg-red-400', textClass: 'text-red-500' },
     };
     return map[this.status()];
   });

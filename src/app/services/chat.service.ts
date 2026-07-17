@@ -18,7 +18,7 @@ import { merge } from 'rxjs';
 import { ChatPayload, SystemPayload, WsMessage } from '../models/ws-message.model';
 import { WebSocketService } from './web-socket.service';
 
-const WS_URL      = buildWebSocketUrl();
+const WS_URL = buildWebSocketUrl();
 const MAX_HISTORY = 100; // sliding window — prevents unbounded memory growth
 
 function buildWebSocketUrl(): string {
@@ -37,17 +37,15 @@ export class ChatService {
   private readonly _messages = signal<WsMessage[]>([]);
 
   // Session identity — generated once per browser session
-  private readonly _author = signal<string>(
-    'User_' + Math.floor(Math.random() * 9000 + 1000),
-  );
+  private readonly _author = signal<string>('User_' + Math.floor(Math.random() * 9000 + 1000));
 
   // ── Selectors ──────────────────────────────────────────────────────────────
-  readonly messages     = this._messages.asReadonly();
-  readonly author       = this._author.asReadonly();
+  readonly messages = this._messages.asReadonly();
+  readonly author = this._author.asReadonly();
   readonly messageCount = computed(() => this._messages().length);
 
   // Proxy status/connected from WebSocketService — components need not inject two services.
-  readonly status      = this.ws.status;
+  readonly status = this.ws.status;
   readonly isConnected = this.ws.isConnected;
 
   constructor() {
@@ -59,9 +57,9 @@ export class ChatService {
       this.ws.messagesOfType<SystemPayload>('system'),
     )
       .pipe(takeUntilDestroyed())
-      .subscribe(msg =>
-        this._messages.update(msgs =>
-          [...msgs, msg].slice(-MAX_HISTORY), // sliding window
+      .subscribe((msg) =>
+        this._messages.update(
+          (msgs) => [...msgs, msg].slice(-MAX_HISTORY), // sliding window
         ),
       );
   }
@@ -75,11 +73,11 @@ export class ChatService {
   disconnect(): void {
     this.ws.disconnect();
     // Append a local system note without going through the server
-    this._messages.update(msgs => [
+    this._messages.update((msgs) => [
       ...msgs,
       {
-        type:      'system',
-        payload:   { text: 'You disconnected.' } satisfies SystemPayload,
+        type: 'system',
+        payload: { text: 'You disconnected.' } satisfies SystemPayload,
         timestamp: new Date().toISOString(),
       } as WsMessage<SystemPayload>,
     ]);
@@ -87,8 +85,8 @@ export class ChatService {
 
   sendMessage(text: string): void {
     this.ws.send<ChatPayload>({
-      type:      'chat',
-      payload:   { author: this._author(), text: text.trim() },
+      type: 'chat',
+      payload: { author: this._author(), text: text.trim() },
       timestamp: new Date().toISOString(),
     });
   }

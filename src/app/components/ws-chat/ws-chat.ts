@@ -18,13 +18,7 @@
  *  visually so newest appears at the bottom — auto-scrolled without JS.
  */
 import { SlicePipe } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ChatPayload, SystemPayload, WsMessage } from '../../models/ws-message.model';
 import { ChatService } from '../../services/chat.service';
@@ -39,12 +33,12 @@ import { WsStatusComponent } from '../ws-status/ws-status';
 })
 export class WsChatComponent {
   private readonly chatService = inject(ChatService);
-  private readonly fb          = inject(FormBuilder);
+  private readonly fb = inject(FormBuilder);
 
   // ── Selectors from ChatService ─────────────────────────────────────────────
-  readonly messages     = this.chatService.messages;
-  readonly author       = this.chatService.author;
-  readonly isConnected  = this.chatService.isConnected;
+  readonly messages = this.chatService.messages;
+  readonly author = this.chatService.author;
+  readonly isConnected = this.chatService.isConnected;
   readonly messageCount = this.chatService.messageCount;
 
   // ── Computed ──────────────────────────────────────────────────────────────
@@ -81,8 +75,12 @@ export class WsChatComponent {
   }
 
   // ── Actions ───────────────────────────────────────────────────────────────
-  onConnect():    void { this.chatService.connect();    }
-  onDisconnect(): void { this.chatService.disconnect(); }
+  onConnect(): void {
+    this.chatService.connect();
+  }
+  onDisconnect(): void {
+    this.chatService.disconnect();
+  }
 
   onSend(): void {
     if (this.sendForm.invalid || !this.isConnected()) return;
@@ -98,6 +96,6 @@ export class WsChatComponent {
   }
 
   toggleAuthorForm(): void {
-    this.showAuthorForm.update(v => !v);
+    this.showAuthorForm.update((v) => !v);
   }
 }

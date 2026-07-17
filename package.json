@@ -7,6 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "format:check": "prettier --check .",
+    "format:write": "prettier --write .",
     "ws:serve": "node ws-server.mjs",
     "docker:build": "docker compose build",
     "docker:up": "docker compose up --build",

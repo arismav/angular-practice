@@ -3,7 +3,6 @@
   [class]="cardAccent()"
   [attr.aria-label]="'Task: ' + task().title"
 >
-
   <!-- Header row: priority badge + remove button -->
   <div class="flex items-start justify-between gap-2">
     <span
@@ -35,12 +34,8 @@
 
   <!-- Footer: due date + assignee + status -->
   <div class="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-gray-50">
-
     <!-- Due date -->
-    <time
-      [class]="'text-xs ' + dueDateClasses()"
-      [attr.dateTime]="task().dueDate"
-    >
+    <time [class]="'text-xs ' + dueDateClasses()" [attr.dateTime]="task().dueDate">
       @if (task().dueDate) {
         {{ task().dueDate }}
       } @else {
@@ -66,7 +61,6 @@
         title="Unassigned"
       ></div>
     }
-
   </div>
 
   <!-- Status select -->
@@ -81,5 +75,4 @@
     <option value="in-progress">In Progress</option>
     <option value="done">Done</option>
   </select>
-
 </article>

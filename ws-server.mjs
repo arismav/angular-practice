@@ -16,7 +16,7 @@ import { WebSocketServer } from 'ws';
 
 const PORT = Number(process.env.PORT ?? 4201);
 const HOST = process.env.HOST ?? '0.0.0.0';
-const wss  = new WebSocketServer({ host: HOST, port: PORT });
+const wss = new WebSocketServer({ host: HOST, port: PORT });
 
 /** @type {Set<import('ws').WebSocket>} */
 const clients = new Set();
@@ -33,11 +33,11 @@ function broadcast(message) {
 /** Build a server-originated system message */
 function systemMsg(text) {
   return {
-    type:            'system',
-    payload:         { text, clientCount: clients.size },
-    timestamp:       new Date().toISOString(),
+    type: 'system',
+    payload: { text, clientCount: clients.size },
+    timestamp: new Date().toISOString(),
     serverTimestamp: new Date().toISOString(),
-    clientCount:     clients.size,
+    clientCount: clients.size,
   };
 }
 
@@ -70,11 +70,13 @@ wss.on('connection', (ws) => {
       const enriched = {
         ...msg,
         serverTimestamp: new Date().toISOString(),
-        clientCount:     clients.size,
+        clientCount: clients.size,
       };
 
       broadcast(enriched);
-      console.log(`[→] ${msg.type} from ${msg.payload?.author ?? 'server'}: ${JSON.stringify(msg.payload)}`);
+      console.log(
+        `[→] ${msg.type} from ${msg.payload?.author ?? 'server'}: ${JSON.stringify(msg.payload)}`,
+      );
     } catch {
       ws.send(JSON.stringify(systemMsg('Invalid JSON — message ignored.')));
     }
@@ -102,13 +104,37 @@ setInterval(() => {
 // via messagesOfType<NotificationPayload>('notification') and updates its signal.
 
 const MOCK_NOTIFICATIONS = [
-  { title: 'Deployment complete',   message: 'v2.4.1 was deployed to production.',          severity: 'success' },
-  { title: 'PR review requested',   message: 'Alice requested your review on #142.',        severity: 'info'    },
-  { title: 'High memory usage',     message: 'Server RAM at 87% — consider scaling up.',   severity: 'warning' },
-  { title: 'Pipeline failed',       message: 'Build #318 failed on the lint step.',         severity: 'error'   },
-  { title: 'New team member',       message: 'Carol White joined the Angular 21 project.',  severity: 'info'    },
-  { title: 'Task overdue',          message: '"Write component tests" is past its due date.', severity: 'warning' },
-  { title: 'Tests passed',          message: 'All 142 unit tests passed successfully.',     severity: 'success' },
+  {
+    title: 'Deployment complete',
+    message: 'v2.4.1 was deployed to production.',
+    severity: 'success',
+  },
+  {
+    title: 'PR review requested',
+    message: 'Alice requested your review on #142.',
+    severity: 'info',
+  },
+  {
+    title: 'High memory usage',
+    message: 'Server RAM at 87% — consider scaling up.',
+    severity: 'warning',
+  },
+  { title: 'Pipeline failed', message: 'Build #318 failed on the lint step.', severity: 'error' },
+  {
+    title: 'New team member',
+    message: 'Carol White joined the Angular 21 project.',
+    severity: 'info',
+  },
+  {
+    title: 'Task overdue',
+    message: '"Write component tests" is past its due date.',
+    severity: 'warning',
+  },
+  {
+    title: 'Tests passed',
+    message: 'All 142 unit tests passed successfully.',
+    severity: 'success',
+  },
 ];
 
 let notifIndex = 0;
@@ -116,20 +142,20 @@ let notifIndex = 0;
 setInterval(() => {
   if (clients.size === 0) return;
 
-  const template  = MOCK_NOTIFICATIONS[notifIndex % MOCK_NOTIFICATIONS.length];
+  const template = MOCK_NOTIFICATIONS[notifIndex % MOCK_NOTIFICATIONS.length];
   notifIndex++;
 
   const notification = {
-    type:            'notification',
+    type: 'notification',
     payload: {
-      id:       `notif-${Date.now()}`,
-      title:    template.title,
-      message:  template.message,
+      id: `notif-${Date.now()}`,
+      title: template.title,
+      message: template.message,
       severity: template.severity,
     },
-    timestamp:       new Date().toISOString(),
+    timestamp: new Date().toISOString(),
     serverTimestamp: new Date().toISOString(),
-    clientCount:     clients.size,
+    clientCount: clients.size,
   };
 
   broadcast(notification);
@@ -143,7 +169,9 @@ wss.on('listening', () => {
 
 wss.on('error', (err) => {
   if (err.code === 'EADDRINUSE') {
-    console.error(`Port ${PORT} is already in use. Stop the existing WS server or run with a different PORT.`);
+    console.error(
+      `Port ${PORT} is already in use. Stop the existing WS server or run with a different PORT.`,
+    );
     process.exit(1);
   }
 

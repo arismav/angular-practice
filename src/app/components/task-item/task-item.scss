@@ -28,10 +28,20 @@
          cursor-pointer transition-opacity duration-100 active:scale-95
          focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500;
 
-  &:hover { @apply opacity-80; }
+  &:hover {
+    @apply opacity-80;
+  }
 
-  &--start  { @apply bg-amber-100 text-amber-800; }
-  &--done   { @apply bg-emerald-100 text-emerald-800; }
-  &--reset  { @apply bg-gray-100 text-gray-700; }
-  &--remove { @apply bg-red-100 text-red-700; }
+  &--start {
+    @apply bg-amber-100 text-amber-800;
+  }
+  &--done {
+    @apply bg-emerald-100 text-emerald-800;
+  }
+  &--reset {
+    @apply bg-gray-100 text-gray-700;
+  }
+  &--remove {
+    @apply bg-red-100 text-red-700;
+  }
 }

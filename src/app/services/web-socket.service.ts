@@ -23,7 +23,6 @@ export type ConnectionStatus = 'connecting' | 'connected' | 'disconnected' | 'er
 
 @Injectable({ providedIn: 'root' })
 export class WebSocketService implements OnDestroy {
-
   // ── Lifecycle teardown ────────────────────────────────────────────────────
   private readonly destroy$ = new Subject<void>();
 
@@ -33,7 +32,7 @@ export class WebSocketService implements OnDestroy {
   // ── Connection state (signal) ─────────────────────────────────────────────
   // Scalar reactive value → signal is the right primitive here.
   private readonly _status = signal<ConnectionStatus>('disconnected');
-  readonly status      = this._status.asReadonly();
+  readonly status = this._status.asReadonly();
   readonly isConnected = computed(() => this._status() === 'connected');
 
   // ── Message stream (RxJS) ─────────────────────────────────────────────────
@@ -68,12 +67,10 @@ export class WebSocketService implements OnDestroy {
     });
 
     // One subscription fans out to all consumers via the shared Subject.
-    this.socket$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next:  msg => this._incoming$.next(msg),
-        error: ()  => this._status.set('error'),
-      });
+    this.socket$.pipe(takeUntil(this.destroy$)).subscribe({
+      next: (msg) => this._incoming$.next(msg),
+      error: () => this._status.set('error'),
+    });
   }
 
   /**
@@ -83,9 +80,7 @@ export class WebSocketService implements OnDestroy {
    * Neither service sees the other's messages.
    */
   messagesOfType<T>(type: WsMessageType) {
-    return this.messages$.pipe(
-      filter((msg): msg is WsMessage<T> => msg.type === type),
-    );
+    return this.messages$.pipe(filter((msg): msg is WsMessage<T> => msg.type === type));
   }
 
   send<T>(message: WsMessage<T>): void {

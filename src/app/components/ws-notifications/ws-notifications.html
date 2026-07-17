@@ -1,6 +1,9 @@
-<section class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden" aria-label="Live notifications"
-  aria-live="polite" aria-relevant="additions">
-
+<section
+  class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden"
+  aria-label="Live notifications"
+  aria-live="polite"
+  aria-relevant="additions"
+>
   <!-- Header -->
   <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
     <div class="flex items-center gap-3">
@@ -9,67 +12,83 @@
     </div>
 
     <div class="flex items-center gap-2">
-      <button type="button" (click)="!isConnected() ? onConnect() : onDisconnect()"
-        class="px-3 py-1.5 rounded-lg bg-slate-800 text-white text-xs font-medium hover:bg-slate-700 transition-colors">
-        {{!isConnected() ? 'Connect' : 'Disconnect'}}
+      <button
+        type="button"
+        (click)="!isConnected() ? onConnect() : onDisconnect()"
+        class="px-3 py-1.5 rounded-lg bg-slate-800 text-white text-xs font-medium hover:bg-slate-700 transition-colors"
+      >
+        {{ !isConnected() ? 'Connect' : 'Disconnect' }}
       </button>
 
       @if (hasUnread()) {
-      <button type="button" (click)="onDismissAll()"
-        class="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium hover:bg-gray-200 transition-colors"
-        aria-label="Dismiss all notifications">
-        Clear all
-      </button>
+        <button
+          type="button"
+          (click)="onDismissAll()"
+          class="px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600 text-xs font-medium hover:bg-gray-200 transition-colors"
+          aria-label="Dismiss all notifications"
+        >
+          Clear all
+        </button>
       }
     </div>
   </div>
 
   <!-- Notification list -->
   <ul class="flex flex-col divide-y divide-gray-50" role="list">
-
     @if (visible().length === 0) {
-    <li class="flex flex-col items-center justify-center gap-2 py-10 text-gray-400">
-      <span class="text-2xl" aria-hidden="true">🔔</span>
-      <span class="text-xs">
-        @if (isConnected()) { No new notifications } @else { Connect to receive notifications }
-      </span>
-    </li>
+      <li class="flex flex-col items-center justify-center gap-2 py-10 text-gray-400">
+        <span class="text-2xl" aria-hidden="true">🔔</span>
+        <span class="text-xs">
+          @if (isConnected()) {
+            No new notifications
+          } @else {
+            Connect to receive notifications
+          }
+        </span>
+      </li>
     }
 
     @for (n of visible(); track n.payload.id) {
-    <li class="flex items-start gap-3 px-5 py-4 transition-colors hover:bg-gray-50" [class]="checkBg(n).bg"
-      role="listitem">
-      <!-- Severity icon -->
-      <span class="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border"
-        [class]="configFor(n).border + ' ' + configFor(n).bg + ' ' + configFor(n).title" aria-hidden="true">
-        {{ configFor(n).icon }}
-      </span>
+      <li
+        class="flex items-start gap-3 px-5 py-4 transition-colors hover:bg-gray-50"
+        [class]="checkBg(n).bg"
+        role="listitem"
+      >
+        <!-- Severity icon -->
+        <span
+          class="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border"
+          [class]="configFor(n).border + ' ' + configFor(n).bg + ' ' + configFor(n).title"
+          aria-hidden="true"
+        >
+          {{ configFor(n).icon }}
+        </span>
 
-      <!-- Content -->
-      <div class="flex-1 min-w-0">
-        <div class="flex items-center gap-2 flex-wrap">
-          <p class="text-sm font-semibold truncate" [class]="configFor(n).title">
-            {{ n.payload.title }}
-          </p>
-          <span class="text-xs px-2 py-0.5 rounded-full font-medium" [class]="configFor(n).badge">
-            {{ n.payload.severity }}
-          </span>
+        <!-- Content -->
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <p class="text-sm font-semibold truncate" [class]="configFor(n).title">
+              {{ n.payload.title }}
+            </p>
+            <span class="text-xs px-2 py-0.5 rounded-full font-medium" [class]="configFor(n).badge">
+              {{ n.payload.severity }}
+            </span>
+          </div>
+          <p class="mt-0.5 text-xs text-gray-500 leading-relaxed">{{ n.payload.message }}</p>
+          <time class="mt-1 text-xs text-gray-400" [attr.dateTime]="n.timestamp">
+            {{ n.serverTimestamp ?? n.timestamp | slice: 11 : 19 }}
+          </time>
         </div>
-        <p class="mt-0.5 text-xs text-gray-500 leading-relaxed">{{ n.payload.message }}</p>
-        <time class="mt-1 text-xs text-gray-400" [attr.dateTime]="n.timestamp">
-          {{ n.serverTimestamp ?? n.timestamp | slice:11:19 }}
-        </time>
-      </div>
 
-      <!-- Dismiss button -->
-      <button type="button" (click)="onDismiss(n.payload.id)"
-        class="flex-shrink-0 text-gray-300 hover:text-gray-500 transition-colors text-lg leading-none mt-0.5"
-        [attr.aria-label]="'Dismiss notification: ' + n.payload.title">
-        ×
-      </button>
-    </li>
+        <!-- Dismiss button -->
+        <button
+          type="button"
+          (click)="onDismiss(n.payload.id)"
+          class="flex-shrink-0 text-gray-300 hover:text-gray-500 transition-colors text-lg leading-none mt-0.5"
+          [attr.aria-label]="'Dismiss notification: ' + n.payload.title"
+        >
+          ×
+        </button>
+      </li>
     }
-
   </ul>
-
 </section>

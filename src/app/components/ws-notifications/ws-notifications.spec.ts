@@ -27,9 +27,9 @@ function makeNotification(
   severity: NotificationPayload['severity'] = 'info',
 ): WsMessage<NotificationPayload> {
   return {
-    type:            'notification',
-    payload:         { id, title: `Title ${id}`, message: `Message ${id}`, severity },
-    timestamp:       '2026-03-22T10:00:00.000Z',
+    type: 'notification',
+    payload: { id, title: `Title ${id}`, message: `Message ${id}`, severity },
+    timestamp: '2026-03-22T10:00:00.000Z',
     serverTimestamp: '2026-03-22T10:00:00.000Z',
   };
 }
@@ -37,31 +37,31 @@ function makeNotification(
 // ── Suite ─────────────────────────────────────────────────────────────────────
 
 describe('WsNotificationsComponent', () => {
-  let fixture:   ComponentFixture<WsNotificationsComponent>;
+  let fixture: ComponentFixture<WsNotificationsComponent>;
   let component: WsNotificationsComponent;
 
   // Writable signals — mutate these in each test to drive component state
-  const visible$     = signal<WsMessage<NotificationPayload>[]>([]);
+  const visible$ = signal<WsMessage<NotificationPayload>[]>([]);
   const isConnected$ = signal<boolean>(false);
 
   // Derived signals mirror what the real service exposes
   const unreadCount$ = computed(() => visible$().length);
-  const hasUnread$   = computed(() => visible$().length > 0);
+  const hasUnread$ = computed(() => visible$().length > 0);
 
   const mockNotificationService: Partial<NotificationService> = {
-    visible:     visible$,
+    visible: visible$,
     unreadCount: unreadCount$,
-    hasUnread:   hasUnread$,
+    hasUnread: hasUnread$,
     isConnected: isConnected$.asReadonly(),
-    connect:     vi.fn(),
-    disconnect:  vi.fn(),
-    dismiss:     vi.fn(),
-    dismissAll:  vi.fn(),
+    connect: vi.fn(),
+    disconnect: vi.fn(),
+    dismiss: vi.fn(),
+    dismissAll: vi.fn(),
   };
 
   // WsStatusComponent (child) injects WebSocketService — provide a minimal stub
   const mockWsService: Partial<WebSocketService> = {
-    status:      signal<ConnectionStatus>('disconnected').asReadonly(),
+    status: signal<ConnectionStatus>('disconnected').asReadonly(),
     isConnected: isConnected$.asReadonly(),
   };
 
@@ -72,14 +72,14 @@ describe('WsNotificationsComponent', () => {
     vi.clearAllMocks();
 
     await TestBed.configureTestingModule({
-      imports:   [WsNotificationsComponent],
+      imports: [WsNotificationsComponent],
       providers: [
         { provide: NotificationService, useValue: mockNotificationService },
-        { provide: WebSocketService,    useValue: mockWsService           },
+        { provide: WebSocketService, useValue: mockWsService },
       ],
     }).compileComponents();
 
-    fixture   = TestBed.createComponent(WsNotificationsComponent);
+    fixture = TestBed.createComponent(WsNotificationsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -220,7 +220,11 @@ describe('WsNotificationsComponent', () => {
       visible$.set([makeNotification('1')]);
       fixture.detectChanges();
 
-      (fixture.nativeElement.querySelector('[aria-label="Dismiss all notifications"]') as HTMLElement).click();
+      (
+        fixture.nativeElement.querySelector(
+          '[aria-label="Dismiss all notifications"]',
+        ) as HTMLElement
+      ).click();
 
       expect(spy).toHaveBeenCalledOnce();
     });
@@ -247,7 +251,9 @@ describe('WsNotificationsComponent', () => {
       visible$.set([makeNotification('a'), makeNotification('b')]);
       fixture.detectChanges();
 
-      const dismissBtns = fixture.nativeElement.querySelectorAll('[aria-label^="Dismiss notification:"]');
+      const dismissBtns = fixture.nativeElement.querySelectorAll(
+        '[aria-label^="Dismiss notification:"]',
+      );
       expect(dismissBtns.length).toBe(2);
     });
   });
