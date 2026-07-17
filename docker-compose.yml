@@ -6,7 +6,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "8080:80"
+      - '8080:80'
 
   backend:
     build:
@@ -16,4 +16,4 @@ services:
       HOST: 0.0.0.0
       PORT: 4201
     expose:
-      - "4201"
+      - '4201'

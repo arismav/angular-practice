@@ -19,28 +19,26 @@ export class TaskService {
     const tasks = this._tasks();
     return {
       total: tasks.length,
-      todo: tasks.filter(t => t.status === 'todo').length,
-      inProgress: tasks.filter(t => t.status === 'in-progress').length,
-      done: tasks.filter(t => t.status === 'done').length,
+      todo: tasks.filter((t) => t.status === 'todo').length,
+      inProgress: tasks.filter((t) => t.status === 'in-progress').length,
+      done: tasks.filter((t) => t.status === 'done').length,
     };
   });
 
   private nextId = 5;
 
   addTask(title: string): void {
-    this._tasks.update(tasks => [
+    this._tasks.update((tasks) => [
       ...tasks,
       { id: this.nextId++, title: title.trim(), status: 'todo' },
     ]);
   }
 
   updateStatus(id: number, status: TaskStatus): void {
-    this._tasks.update(tasks =>
-      tasks.map(t => (t.id === id ? { ...t, status } : t))
-    );
+    this._tasks.update((tasks) => tasks.map((t) => (t.id === id ? { ...t, status } : t)));
   }
 
   removeTask(id: number): void {
-    this._tasks.update(tasks => tasks.filter(t => t.id !== id));
+    this._tasks.update((tasks) => tasks.filter((t) => t.id !== id));
   }
 }

@@ -1,11 +1,5 @@
 import { Injectable, computed, signal } from '@angular/core';
-import {
-  AppState,
-  Task,
-  TaskFilter,
-  TaskPriority,
-  TaskStatus,
-} from '../models/project.model';
+import { AppState, Task, TaskFilter, TaskPriority, TaskStatus } from '../models/project.model';
 
 // ─── Seed data ────────────────────────────────────────────────────────────────
 
@@ -20,17 +14,71 @@ const INITIAL_STATE: AppState = {
         'A production-grade example showcasing signal-based state, computed selectors, and reactive component patterns.',
       tags: ['Angular 21', 'Signals', 'TypeScript', 'Tailwind'],
       members: [
-        { id: 1, name: 'Alice Johnson', initials: 'AJ', avatarColor: 'bg-violet-500', role: 'owner'  },
-        { id: 2, name: 'Bob Smith',     initials: 'BS', avatarColor: 'bg-sky-500',    role: 'member' },
-        { id: 3, name: 'Carol White',   initials: 'CW', avatarColor: 'bg-rose-500',   role: 'member' },
+        {
+          id: 1,
+          name: 'Alice Johnson',
+          initials: 'AJ',
+          avatarColor: 'bg-violet-500',
+          role: 'owner',
+        },
+        { id: 2, name: 'Bob Smith', initials: 'BS', avatarColor: 'bg-sky-500', role: 'member' },
+        { id: 3, name: 'Carol White', initials: 'CW', avatarColor: 'bg-rose-500', role: 'member' },
       ],
       tasks: [
-        { id: 1, title: 'Setup workspace',            description: 'Initialize Angular 21 with Tailwind v4',             status: 'done',        priority: 'high',   assigneeId: 1, dueDate: '2026-03-15' },
-        { id: 2, title: 'Define AppState model',      description: 'Create complex nested interfaces for the store',     status: 'done',        priority: 'high',   assigneeId: 1, dueDate: '2026-03-16' },
-        { id: 3, title: 'Build signal store service', description: 'Implement ProjectService with computed selectors',   status: 'in-progress', priority: 'high',   assigneeId: 2, dueDate: '2026-03-22' },
-        { id: 4, title: 'Design kanban board UI',     description: 'Task board with three status columns and filtering', status: 'in-progress', priority: 'medium', assigneeId: 3, dueDate: '2026-03-23' },
-        { id: 5, title: 'Add member assignment',      description: 'Link tasks to team members via assigneeId',         status: 'todo',        priority: 'medium', assigneeId: null, dueDate: '2026-03-28' },
-        { id: 6, title: 'Write component tests',      description: 'Unit tests for signal-based services and components', status: 'todo',      priority: 'low',    assigneeId: 2, dueDate: '2026-03-30' },
+        {
+          id: 1,
+          title: 'Setup workspace',
+          description: 'Initialize Angular 21 with Tailwind v4',
+          status: 'done',
+          priority: 'high',
+          assigneeId: 1,
+          dueDate: '2026-03-15',
+        },
+        {
+          id: 2,
+          title: 'Define AppState model',
+          description: 'Create complex nested interfaces for the store',
+          status: 'done',
+          priority: 'high',
+          assigneeId: 1,
+          dueDate: '2026-03-16',
+        },
+        {
+          id: 3,
+          title: 'Build signal store service',
+          description: 'Implement ProjectService with computed selectors',
+          status: 'in-progress',
+          priority: 'high',
+          assigneeId: 2,
+          dueDate: '2026-03-22',
+        },
+        {
+          id: 4,
+          title: 'Design kanban board UI',
+          description: 'Task board with three status columns and filtering',
+          status: 'in-progress',
+          priority: 'medium',
+          assigneeId: 3,
+          dueDate: '2026-03-23',
+        },
+        {
+          id: 5,
+          title: 'Add member assignment',
+          description: 'Link tasks to team members via assigneeId',
+          status: 'todo',
+          priority: 'medium',
+          assigneeId: null,
+          dueDate: '2026-03-28',
+        },
+        {
+          id: 6,
+          title: 'Write component tests',
+          description: 'Unit tests for signal-based services and components',
+          status: 'todo',
+          priority: 'low',
+          assigneeId: 2,
+          dueDate: '2026-03-30',
+        },
       ],
     },
   ],
@@ -53,7 +101,7 @@ export class ProjectService {
   /** The full active-project object */
   readonly activeProject = computed(() => {
     const { projects, activeProjectId } = this._state();
-    return projects.find(p => p.id === activeProjectId) ?? null;
+    return projects.find((p) => p.id === activeProjectId) ?? null;
   });
 
   /** Member list — consumed by ProjectHeaderComponent and TaskBoardComponent */
@@ -64,24 +112,24 @@ export class ProjectService {
 
   /** Tasks grouped by status column, pre-filtered — consumed by TaskBoardComponent */
   readonly tasksByStatus = computed(() => {
-    const tasks  = this.activeProject()?.tasks ?? [];
+    const tasks = this.activeProject()?.tasks ?? [];
     const filter = this._state().filter;
-    const visible = filter === 'all' ? tasks : tasks.filter(t => t.status === filter);
+    const visible = filter === 'all' ? tasks : tasks.filter((t) => t.status === filter);
     return {
-      todo:       visible.filter(t => t.status === 'todo'),
-      inProgress: visible.filter(t => t.status === 'in-progress'),
-      done:       visible.filter(t => t.status === 'done'),
+      todo: visible.filter((t) => t.status === 'todo'),
+      inProgress: visible.filter((t) => t.status === 'in-progress'),
+      done: visible.filter((t) => t.status === 'done'),
     };
   });
 
   /** Aggregate counters + completion % — consumed by ProjectStatsComponent */
   readonly stats = computed(() => {
     const tasks = this.activeProject()?.tasks ?? [];
-    const done  = tasks.filter(t => t.status === 'done').length;
+    const done = tasks.filter((t) => t.status === 'done').length;
     return {
-      total:      tasks.length,
-      todo:       tasks.filter(t => t.status === 'todo').length,
-      inProgress: tasks.filter(t => t.status === 'in-progress').length,
+      total: tasks.length,
+      todo: tasks.filter((t) => t.status === 'todo').length,
+      inProgress: tasks.filter((t) => t.status === 'in-progress').length,
       done,
       completion: tasks.length ? Math.round((done / tasks.length) * 100) : 0,
     };
@@ -92,45 +140,43 @@ export class ProjectService {
   // This keeps state immutable and change detection reliable.
 
   setFilter(filter: TaskFilter): void {
-    this._state.update(s => ({ ...s, filter }));
+    this._state.update((s) => ({ ...s, filter }));
   }
 
   addTask(title: string, priority: TaskPriority = 'medium'): void {
     const task: Task = {
-      id:          Date.now(),
-      title:       title.trim(),
+      id: Date.now(),
+      title: title.trim(),
       description: '',
-      status:      'todo',
+      status: 'todo',
       priority,
-      assigneeId:  null,
-      dueDate:     null,
+      assigneeId: null,
+      dueDate: null,
     };
-    this._state.update(s => ({
+    this._state.update((s) => ({
       ...s,
-      projects: s.projects.map(p =>
-        p.id === s.activeProjectId ? { ...p, tasks: [...p.tasks, task] } : p
+      projects: s.projects.map((p) =>
+        p.id === s.activeProjectId ? { ...p, tasks: [...p.tasks, task] } : p,
       ),
     }));
   }
 
   updateTaskStatus(taskId: number, status: TaskStatus): void {
-    this._state.update(s => ({
+    this._state.update((s) => ({
       ...s,
-      projects: s.projects.map(p =>
+      projects: s.projects.map((p) =>
         p.id === s.activeProjectId
-          ? { ...p, tasks: p.tasks.map(t => t.id === taskId ? { ...t, status } : t) }
-          : p
+          ? { ...p, tasks: p.tasks.map((t) => (t.id === taskId ? { ...t, status } : t)) }
+          : p,
       ),
     }));
   }
 
   removeTask(taskId: number): void {
-    this._state.update(s => ({
+    this._state.update((s) => ({
       ...s,
-      projects: s.projects.map(p =>
-        p.id === s.activeProjectId
-          ? { ...p, tasks: p.tasks.filter(t => t.id !== taskId) }
-          : p
+      projects: s.projects.map((p) =>
+        p.id === s.activeProjectId ? { ...p, tasks: p.tasks.filter((t) => t.id !== taskId) } : p,
       ),
     }));
   }

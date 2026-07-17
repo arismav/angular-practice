@@ -2,10 +2,10 @@
   class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden flex flex-col"
   aria-label="Live team chat"
 >
-
   <!-- ── Panel header ──────────────────────────────────────────────────────── -->
-  <div class="flex items-center justify-between gap-3 px-4 py-3 border-b border-gray-100 bg-slate-800">
-
+  <div
+    class="flex items-center justify-between gap-3 px-4 py-3 border-b border-gray-100 bg-slate-800"
+  >
     <div class="flex items-center gap-3">
       <span class="text-white font-semibold text-sm">Live Chat</span>
       <!-- WsStatusComponent: injects WebSocketService independently -->
@@ -23,13 +23,15 @@
         aria-controls="author-form"
         [attr.aria-label]="'Change author name, current: ' + author()"
       >
-        <span class="w-5 h-5 rounded-full bg-violet-500 flex items-center justify-center text-white text-xs font-bold" aria-hidden="true">
+        <span
+          class="w-5 h-5 rounded-full bg-violet-500 flex items-center justify-center text-white text-xs font-bold"
+          aria-hidden="true"
+        >
           {{ authorInitial() }}
         </span>
         <span class="text-slate-300 text-xs truncate max-w-24">{{ author() }}</span>
       </button>
     </div>
-
   </div>
 
   <!-- ── Author rename form (collapsible) ──────────────────────────────────── -->
@@ -85,11 +87,12 @@
     }
 
     @for (msg of reversedMessages(); track msg.timestamp + msg.type) {
-
       <!-- System message — centred, muted -->
       @if (isSystemMsg(msg)) {
         <div class="flex justify-center">
-          <span class="text-xs text-gray-400 bg-gray-50 px-3 py-1 rounded-full border border-gray-100">
+          <span
+            class="text-xs text-gray-400 bg-gray-50 px-3 py-1 rounded-full border border-gray-100"
+          >
             {{ msg.payload.text }}
             @if (msg.clientCount) {
               &middot; {{ msg.clientCount }} online
@@ -101,7 +104,6 @@
       <!-- Chat message — own vs others -->
       @if (isChatMsg(msg)) {
         <div [class]="isOwnMessage(msg) ? 'flex flex-col items-end' : 'flex flex-col items-start'">
-
           <!-- Author label -->
           <span class="text-xs text-gray-400 mb-0.5 px-1">
             {{ isOwnMessage(msg) ? 'You' : msg.payload.author }}
@@ -109,9 +111,11 @@
 
           <!-- Bubble -->
           <div
-            [class]="isOwnMessage(msg)
-              ? 'bg-slate-800 text-white rounded-2xl rounded-tr-sm px-3 py-2 text-sm max-w-xs break-words'
-              : 'bg-gray-100 text-gray-800 rounded-2xl rounded-tl-sm px-3 py-2 text-sm max-w-xs break-words'"
+            [class]="
+              isOwnMessage(msg)
+                ? 'bg-slate-800 text-white rounded-2xl rounded-tr-sm px-3 py-2 text-sm max-w-xs break-words'
+                : 'bg-gray-100 text-gray-800 rounded-2xl rounded-tl-sm px-3 py-2 text-sm max-w-xs break-words'
+            "
           >
             {{ msg.payload.text }}
           </div>
@@ -121,18 +125,15 @@
             class="text-xs text-gray-300 mt-0.5 px-1"
             [attr.dateTime]="msg.serverTimestamp ?? msg.timestamp"
           >
-            {{ (msg.serverTimestamp ?? msg.timestamp) | slice: 11 : 19 }}
+            {{ msg.serverTimestamp ?? msg.timestamp | slice: 11 : 19 }}
           </time>
-
         </div>
       }
-
     }
   </div>
 
   <!-- ── Send form ──────────────────────────────────────────────────────────── -->
   <div class="border-t border-gray-100 px-4 py-3">
-
     @if (isConnected()) {
       <form
         [formGroup]="sendForm"
@@ -170,7 +171,5 @@
         <p class="sr-only" role="status">WebSocket disconnected. Press Connect to join the chat.</p>
       </div>
     }
-
   </div>
-
 </section>

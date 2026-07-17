@@ -1,9 +1,4 @@
-<article
-  class="task-item"
-  [class]="cardClasses()"
-  [attr.aria-label]="'Task: ' + task().title"
->
-
+<article class="task-item" [class]="cardClasses()" [attr.aria-label]="'Task: ' + task().title">
   <div class="task-item__body">
     <span class="task-item__title" [class]="titleClasses()">
       {{ task().title }}
@@ -13,23 +8,31 @@
     </span>
   </div>
 
-  <div
-    class="task-item__actions"
-    role="group"
-    [attr.aria-label]="'Actions for ' + task().title"
-  >
+  <div class="task-item__actions" role="group" [attr.aria-label]="'Actions for ' + task().title">
     @if (task().status !== 'in-progress') {
-      <button class="task-btn task-btn--start" (click)="onStatusChange('in-progress')" aria-label="Mark as in progress">
+      <button
+        class="task-btn task-btn--start"
+        (click)="onStatusChange('in-progress')"
+        aria-label="Mark as in progress"
+      >
         &#9654; Start
       </button>
     }
     @if (task().status !== 'done') {
-      <button class="task-btn task-btn--done" (click)="onStatusChange('done')" aria-label="Mark as done">
+      <button
+        class="task-btn task-btn--done"
+        (click)="onStatusChange('done')"
+        aria-label="Mark as done"
+      >
         &#10003; Done
       </button>
     }
     @if (task().status !== 'todo') {
-      <button class="task-btn task-btn--reset" (click)="onStatusChange('todo')" aria-label="Reset to todo">
+      <button
+        class="task-btn task-btn--reset"
+        (click)="onStatusChange('todo')"
+        aria-label="Reset to todo"
+      >
         &#8635; Reset
       </button>
     }
@@ -41,5 +44,4 @@
       &#10005;
     </button>
   </div>
-
 </article>

@@ -1,9 +1,6 @@
 <section aria-label="Task list">
-
   @if (tasks().length === 0) {
-    <p class="task-list__empty" role="status">
-      No tasks yet — add one above!
-    </p>
+    <p class="task-list__empty" role="status">No tasks yet — add one above!</p>
   } @else {
     <ul class="task-list" role="list">
       @for (task of tasks(); track task.id) {
@@ -17,5 +14,4 @@
       }
     </ul>
   }
-
 </section>

@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  input,
-  output,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { Task, TaskStatus } from '../../models/task.model';
 
 @Component({
@@ -44,7 +38,7 @@ export class TaskItemComponent {
   });
 
   readonly titleClasses = computed<string>(() =>
-    this.task().status === 'done' ? 'line-through text-gray-400' : 'text-gray-800'
+    this.task().status === 'done' ? 'line-through text-gray-400' : 'text-gray-800',
   );
 
   readonly badgeClasses = computed<string>(() => {

@@ -15,7 +15,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NotificationPayload, WsMessage } from '../models/ws-message.model';
 import { WebSocketService } from './web-socket.service';
 
-const WS_URL      = buildWebSocketUrl();
+const WS_URL = buildWebSocketUrl();
 const MAX_HISTORY = 20; // keep the last 20 notifications
 
 function buildWebSocketUrl(): string {
@@ -31,7 +31,7 @@ export class NotificationService {
 
   // ── State ──────────────────────────────────────────────────────────────────
   private readonly _notifications = signal<WsMessage<NotificationPayload>[]>([]);
-  private readonly _dismissedIds  = signal<Set<string>>(new Set());
+  private readonly _dismissedIds = signal<Set<string>>(new Set());
 
   // ── Selectors ──────────────────────────────────────────────────────────────
 
@@ -40,7 +40,7 @@ export class NotificationService {
 
   /** Only the visible (not-yet-dismissed) ones */
   readonly visible = computed(() =>
-    this._notifications().filter(n => !this._dismissedIds().has(n.payload.id)),
+    this._notifications().filter((n) => !this._dismissedIds().has(n.payload.id)),
   );
 
   /** Count of unread (visible) notifications — useful for a badge */
@@ -50,7 +50,7 @@ export class NotificationService {
   readonly hasUnread = computed(() => this.unreadCount() > 0);
 
   // Proxy connection state — component injects one service, not two
-  readonly status      = this.ws.status;
+  readonly status = this.ws.status;
   readonly isConnected = this.ws.isConnected;
 
   constructor() {
@@ -59,11 +59,7 @@ export class NotificationService {
     this.ws
       .messagesOfType<NotificationPayload>('notification')
       .pipe(takeUntilDestroyed())
-      .subscribe(msg =>
-        this._notifications.update(list =>
-          [...list, msg].slice(-MAX_HISTORY),
-        ),
-      );
+      .subscribe((msg) => this._notifications.update((list) => [...list, msg].slice(-MAX_HISTORY)));
   }
 
   // ── Actions ────────────────────────────────────────────────────────────────
@@ -72,18 +68,18 @@ export class NotificationService {
     this.ws.connect(WS_URL);
   }
 
-  disconnect():void {
+  disconnect(): void {
     this.ws.disconnect();
   }
 
   /** Remove a single notification from the visible list */
   dismiss(id: string): void {
-    this._dismissedIds.update(ids => new Set([...ids, id]));
+    this._dismissedIds.update((ids) => new Set([...ids, id]));
   }
 
   /** Clear all visible notifications at once */
   dismissAll(): void {
-    const allIds = this._notifications().map(n => n.payload.id);
-    this._dismissedIds.update(ids => new Set([...ids, ...allIds]));
+    const allIds = this._notifications().map((n) => n.payload.id);
+    this._dismissedIds.update((ids) => new Set([...ids, ...allIds]));
   }
 }

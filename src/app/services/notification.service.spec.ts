@@ -22,8 +22,8 @@ function makeNotification(
   severity: NotificationPayload['severity'] = 'info',
 ): WsMessage<NotificationPayload> {
   return {
-    type:      'notification',
-    payload:   { id, title: `Title ${id}`, message: `Message ${id}`, severity },
+    type: 'notification',
+    payload: { id, title: `Title ${id}`, message: `Message ${id}`, severity },
     timestamp: new Date().toISOString(),
   };
 }
@@ -43,9 +43,9 @@ describe('NotificationService', () => {
     notif$ = new Subject<WsMessage<NotificationPayload>>();
 
     mockWs = {
-      status:      signal<ConnectionStatus>('disconnected').asReadonly(),
+      status: signal<ConnectionStatus>('disconnected').asReadonly(),
       isConnected: signal(false).asReadonly(),
-      connect:     vi.fn(),
+      connect: vi.fn(),
       // messagesOfType is generic — return notif$ for 'notification', EMPTY for others
       messagesOfType<T>(type: WsMessageType): Observable<WsMessage<T>> {
         const stream = type === 'notification' ? notif$.asObservable() : EMPTY;
@@ -54,10 +54,7 @@ describe('NotificationService', () => {
     };
 
     TestBed.configureTestingModule({
-      providers: [
-        NotificationService,
-        { provide: WebSocketService, useValue: mockWs },
-      ],
+      providers: [NotificationService, { provide: WebSocketService, useValue: mockWs }],
     });
 
     // TestBed provides the injection context required by takeUntilDestroyed()
@@ -104,7 +101,7 @@ describe('NotificationService', () => {
       notif$.next(makeNotification('n3'));
 
       expect(service.unreadCount()).toBe(3);
-      expect(service.visible().map(n => n.payload.id)).toEqual(['n1', 'n2', 'n3']);
+      expect(service.visible().map((n) => n.payload.id)).toEqual(['n1', 'n2', 'n3']);
     });
 
     it('enforces MAX_HISTORY sliding window of 20', () => {
@@ -114,7 +111,7 @@ describe('NotificationService', () => {
 
       // Only the last 20 are kept
       expect(service.all().length).toBe(20);
-      expect(service.all()[0].payload.id).toBe('n6');   // first kept
+      expect(service.all()[0].payload.id).toBe('n6'); // first kept
       expect(service.all()[19].payload.id).toBe('n25'); // last received
     });
   });

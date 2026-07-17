@@ -20,10 +20,10 @@ export class TaskFiltersComponent {
   readonly activeFilter = this.projectService.filter;
 
   readonly filters: FilterOption[] = [
-    { value: 'all',         label: 'All'         },
-    { value: 'todo',        label: 'To Do'        },
-    { value: 'in-progress', label: 'In Progress'  },
-    { value: 'done',        label: 'Done'         },
+    { value: 'all', label: 'All' },
+    { value: 'todo', label: 'To Do' },
+    { value: 'in-progress', label: 'In Progress' },
+    { value: 'done', label: 'Done' },
   ];
 
   setFilter(value: TaskFilter): void {
