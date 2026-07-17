@@ -54,6 +54,7 @@ describe('WsNotificationsComponent', () => {
     hasUnread:   hasUnread$,
     isConnected: isConnected$.asReadonly(),
     connect:     vi.fn(),
+    disconnect:  vi.fn(),
     dismiss:     vi.fn(),
     dismissAll:  vi.fn(),
   };
@@ -112,17 +113,28 @@ describe('WsNotificationsComponent', () => {
       expect(btn.textContent?.trim()).toBe('Connect');
     });
 
-    it('is not rendered when connected', () => {
+    it('renders as Disconnect when connected', () => {
       isConnected$.set(true);
       fixture.detectChanges();
 
-      const btn = fixture.nativeElement.querySelector('button.bg-slate-800');
-      expect(btn).toBeNull();
+      const btn = fixture.nativeElement.querySelector('button.bg-slate-800') as HTMLElement;
+      expect(btn).toBeTruthy();
+      expect(btn.textContent?.trim()).toBe('Disconnect');
     });
 
     it('calls onConnect() on click', () => {
       const spy = vi.spyOn(component, 'onConnect');
       isConnected$.set(false);
+      fixture.detectChanges();
+
+      (fixture.nativeElement.querySelector('button.bg-slate-800') as HTMLElement).click();
+
+      expect(spy).toHaveBeenCalledOnce();
+    });
+
+    it('calls onDisconnect() on click when connected', () => {
+      const spy = vi.spyOn(component, 'onDisconnect');
+      isConnected$.set(true);
       fixture.detectChanges();
 
       (fixture.nativeElement.querySelector('button.bg-slate-800') as HTMLElement).click();

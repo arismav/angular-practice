@@ -10,9 +10,8 @@
  */
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { Subject } from 'rxjs';
-import { EMPTY } from 'rxjs';
-import { NotificationPayload, WsMessage } from '../models/ws-message.model';
+import { EMPTY, Observable, Subject } from 'rxjs';
+import { NotificationPayload, WsMessage, WsMessageType } from '../models/ws-message.model';
 import { ConnectionStatus, WebSocketService } from './web-socket.service';
 import { NotificationService } from './notification.service';
 
@@ -48,9 +47,10 @@ describe('NotificationService', () => {
       isConnected: signal(false).asReadonly(),
       connect:     vi.fn(),
       // messagesOfType is generic — return notif$ for 'notification', EMPTY for others
-      messagesOfType: vi.fn((type: string) =>
-        type === 'notification' ? notif$.asObservable() : EMPTY,
-      ),
+      messagesOfType<T>(type: WsMessageType): Observable<WsMessage<T>> {
+        const stream = type === 'notification' ? notif$.asObservable() : EMPTY;
+        return stream as Observable<WsMessage<T>>;
+      },
     };
 
     TestBed.configureTestingModule({
@@ -207,8 +207,11 @@ describe('NotificationService', () => {
     it('delegates to WebSocketService.connect() with the correct URL', () => {
       service.connect();
 
+      const expectedProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const expectedUrl = `${expectedProtocol}//${window.location.host}/ws`;
+
       expect(mockWs.connect).toHaveBeenCalledOnce();
-      expect(mockWs.connect).toHaveBeenCalledWith('ws://localhost:4201');
+      expect(mockWs.connect).toHaveBeenCalledWith(expectedUrl);
     });
   });
 });
