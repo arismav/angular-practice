@@ -118,7 +118,6 @@ This repository uses GitHub Actions as the main automation system:
   added.
 - `GHCR Retention Report`: reports old container package versions and can delete old sha-only
   versions when explicitly confirmed.
-- `Dependabot`: opens update PRs for npm dependencies, GitHub Actions, and Docker base images.
 
 Create a versioned release image:
 
