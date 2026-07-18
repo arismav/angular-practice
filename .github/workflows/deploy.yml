@@ -1,0 +1,82 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment
+        required: true
+        default: staging
+        type: choice
+        options:
+          - staging
+          - production
+      image_tag:
+        description: GHCR image tag to deploy
+        required: true
+        default: latest
+        type: string
+      dry_run:
+        description: Run validation without touching a remote server
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+  packages: read
+
+env:
+  IMAGE_TAG: ${{ inputs.image_tag }}
+
+jobs:
+  deployment-plan:
+    name: Deployment plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: ${{ inputs.environment }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate production compose file
+        run: docker compose -f docker-compose.prod.yml config
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull deployment candidate images
+        run: docker compose -f docker-compose.prod.yml pull
+
+      - name: Smoke test deployment candidate
+        run: docker compose -f docker-compose.prod.yml up -d --wait
+
+      - name: Check frontend response
+        run: curl --fail --retry 10 --retry-delay 2 http://localhost:8080
+
+      - name: Stop local deployment candidate
+        if: always()
+        run: docker compose -f docker-compose.prod.yml down
+
+      - name: Write deployment summary
+        run: |
+          {
+            echo "## Deployment plan"
+            echo ""
+            echo "- Environment: \`${{ inputs.environment }}\`"
+            echo "- Image tag: \`${{ inputs.image_tag }}\`"
+            echo "- Dry run: \`${{ inputs.dry_run }}\`"
+            echo "- Frontend image: \`ghcr.io/arismav/angular-practice-frontend:${{ inputs.image_tag }}\`"
+            echo "- Backend image: \`ghcr.io/arismav/angular-practice-backend:${{ inputs.image_tag }}\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Stop before real remote deployment
+        if: ${{ !inputs.dry_run }}
+        run: |
+          echo "::error::Remote deployment is not wired yet. Add server secrets and an SSH deploy step before using dry_run=false."
+          exit 1

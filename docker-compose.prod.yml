@@ -1,0 +1,32 @@
+services:
+  frontend:
+    image: ghcr.io/${GHCR_OWNER:-arismav}/angular-practice-frontend:${IMAGE_TAG:-latest}
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      - '${FRONTEND_PORT:-8080}:80'
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -qO- http://localhost/ >/dev/null 2>&1']
+      interval: 10s
+      timeout: 3s
+      retries: 6
+    restart: unless-stopped
+
+  backend:
+    image: ghcr.io/${GHCR_OWNER:-arismav}/angular-practice-backend:${IMAGE_TAG:-latest}
+    environment:
+      HOST: 0.0.0.0
+      PORT: 4201
+    expose:
+      - '4201'
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'node -e "const net=require(''net''); const s=net.connect(4201,''127.0.0.1'',()=>process.exit(0)); s.on(''error'',()=>process.exit(1)); setTimeout(()=>process.exit(1),2000)"',
+        ]
+      interval: 10s
+      timeout: 3s
+      retries: 6
+    restart: unless-stopped

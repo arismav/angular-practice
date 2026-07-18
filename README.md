@@ -65,6 +65,83 @@ npm run docker:down
 npm run docker:logs
 ```
 
+Run the published GHCR images:
+
+```bash
+npm run docker:prod:pull
+npm run docker:prod:up
+```
+
+Then open:
+
+```text
+http://localhost:8080
+```
+
+By default this uses the `latest` image tag. To run a specific CI image tag:
+
+```bash
+IMAGE_TAG=sha-<commit-sha> npm run docker:prod:up
+```
+
+PowerShell:
+
+```powershell
+$env:IMAGE_TAG = 'sha-<commit-sha>'
+npm run docker:prod:up
+```
+
+Useful production-image commands:
+
+```bash
+npm run docker:prod:config
+npm run docker:prod:smoke
+npm run docker:prod:down
+npm run docker:prod:logs
+```
+
+The CI workflow also validates `docker-compose.prod.yml` on pull requests. After a merge to
+`main`, it pulls the published GHCR images, starts them, checks `http://localhost:8080`, and
+then stops the smoke-test stack.
+
+## CI/CD
+
+This repository uses GitHub Actions as the main automation system:
+
+- `CI`: validates formatting, linting, production dependency audit, tests, Angular build,
+  Docker image build, artifact upload, GHCR publish, and production-image smoke tests.
+- `CodeQL`: scans JavaScript and TypeScript for security issues.
+- `Deploy`: manually validates a selected GHCR image tag against `staging` or `production`
+  environments. It currently runs as a dry-run/local smoke test until real server secrets are
+  added.
+- `GHCR Retention Report`: reports old container package versions and can delete old sha-only
+  versions when explicitly confirmed.
+- `Dependabot`: opens update PRs for npm dependencies, GitHub Actions, and Docker base images.
+
+Create a versioned release image:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+The CI workflow publishes Docker images with tags like:
+
+```text
+latest
+sha-<commit-sha>
+v1.0.0
+```
+
+Manual deploy dry run:
+
+```text
+GitHub Actions -> Deploy -> Run workflow
+```
+
+Choose an environment and image tag. To protect production, create GitHub Environments named
+`staging` and `production`, then add required reviewers to `production`.
+
 ## Running unit tests
 
 To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:

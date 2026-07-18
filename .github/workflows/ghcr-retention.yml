@@ -1,0 +1,87 @@
+name: GHCR Retention Report
+
+on:
+  schedule:
+    - cron: '42 5 * * 0'
+  workflow_dispatch:
+    inputs:
+      keep_versions:
+        description: Number of newest safe-to-delete versions to keep per package
+        required: true
+        default: '10'
+        type: string
+      dry_run:
+        description: Report only. Set false plus confirm_delete=DELETE to delete old sha-only versions.
+        required: true
+        default: true
+        type: boolean
+      confirm_delete:
+        description: Type DELETE to allow deletion when dry_run is false
+        required: false
+        default: ''
+        type: string
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  retention:
+    name: Report GHCR package versions
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      OWNER: arismav
+      PACKAGES: angular-practice-frontend angular-practice-backend
+      KEEP_VERSIONS: ${{ inputs.keep_versions }}
+      DRY_RUN: ${{ inputs.dry_run }}
+      CONFIRM_DELETE: ${{ inputs.confirm_delete }}
+
+    steps:
+      - name: Report and optionally delete old sha-only versions
+        shell: bash
+        run: |
+          set -euo pipefail
+          KEEP_VERSIONS="${KEEP_VERSIONS:-10}"
+          DRY_RUN="${DRY_RUN:-true}"
+          CONFIRM_DELETE="${CONFIRM_DELETE:-}"
+
+          for package_name in ${PACKAGES}; do
+            echo "## ${package_name}" >> "$GITHUB_STEP_SUMMARY"
+
+            versions_json="$(gh api "/users/${OWNER}/packages/container/${package_name}/versions?per_page=100")"
+            version_count="$(jq 'length' <<< "${versions_json}")"
+            echo "- Versions found: ${version_count}" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Keeping newest safe-to-delete versions: ${KEEP_VERSIONS}" >> "$GITHUB_STEP_SUMMARY"
+            echo "- Dry run: ${DRY_RUN}" >> "$GITHUB_STEP_SUMMARY"
+
+            delete_ids="$(
+              jq -r --argjson keep "${KEEP_VERSIONS}" '
+                .[$keep:][]
+                | select((.metadata.container.tags // []) | all(. != "latest"))
+                | select((.metadata.container.tags // []) | (length == 0 or all(startswith("sha-"))))
+                | .id
+              ' <<< "${versions_json}"
+            )"
+
+            if [[ -z "${delete_ids}" ]]; then
+              echo "- No old sha-only versions selected." >> "$GITHUB_STEP_SUMMARY"
+              continue
+            fi
+
+            echo "- Selected version ids:" >> "$GITHUB_STEP_SUMMARY"
+            while IFS= read -r version_id; do
+              echo "  - ${version_id}" >> "$GITHUB_STEP_SUMMARY"
+            done <<< "${delete_ids}"
+
+            if [[ "${DRY_RUN}" == "false" && "${CONFIRM_DELETE}" == "DELETE" ]]; then
+              while IFS= read -r version_id; do
+                gh api -X DELETE "/user/packages/container/${package_name}/versions/${version_id}"
+              done <<< "${delete_ids}"
+              echo "- Deleted selected versions." >> "$GITHUB_STEP_SUMMARY"
+            else
+              echo "- Report only. No versions deleted." >> "$GITHUB_STEP_SUMMARY"
+            fi
+          done
