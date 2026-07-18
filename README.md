@@ -110,7 +110,7 @@ This repository uses GitHub Actions as the main automation system:
 
 - `CI`: validates formatting, linting, tests, Angular build, Docker image build, artifact
   upload, GHCR publish, and production-image smoke tests.
-- `Dependency Review`: checks pull requests for newly introduced vulnerable dependency changes.
+- `Dependency Review`: reports newly introduced vulnerable dependency changes on pull requests.
 - `NPM Audit`: runs a scheduled/manual production dependency audit.
 - `CodeQL`: scans JavaScript and TypeScript for security issues.
 - `Deploy`: manually validates a selected GHCR image tag against `staging` or `production`
