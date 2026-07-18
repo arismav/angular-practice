@@ -43,7 +43,7 @@
     "@tailwindcss/postcss": "^4.1.12",
     "angular-eslint": "21.4.0",
     "eslint": "^10.3.0",
-    "jsdom": "^28.0.0",
+    "jsdom": "^29.1.1",
     "postcss": "^8.5.3",
     "prettier": "^3.8.1",
     "tailwindcss": "^4.1.12",
