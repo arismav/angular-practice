@@ -49,9 +49,6 @@ jobs:
       - name: Run lint
         run: npm run lint
 
-      - name: Audit production dependencies
-        run: npm run audit:prod
-
       - name: Run unit tests
         run: npm test -- --watch=false
 

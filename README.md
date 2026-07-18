@@ -108,8 +108,10 @@ then stops the smoke-test stack.
 
 This repository uses GitHub Actions as the main automation system:
 
-- `CI`: validates formatting, linting, production dependency audit, tests, Angular build,
-  Docker image build, artifact upload, GHCR publish, and production-image smoke tests.
+- `CI`: validates formatting, linting, tests, Angular build, Docker image build, artifact
+  upload, GHCR publish, and production-image smoke tests.
+- `Dependency Review`: checks pull requests for newly introduced vulnerable dependency changes.
+- `NPM Audit`: runs a scheduled/manual production dependency audit.
 - `CodeQL`: scans JavaScript and TypeScript for security issues.
 - `Deploy`: manually validates a selected GHCR image tag against `staging` or `production`
   environments. It currently runs as a dry-run/local smoke test until real server secrets are
